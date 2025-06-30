@@ -3,7 +3,7 @@ import globals from "globals";
 import tseslint from "typescript-eslint";
 import { defineConfig } from "eslint/config";
 import jsdoc from "eslint-plugin-jsdoc";
-const eslintPluginPrettierRecommended = require("eslint-plugin-prettier/recommended");
+import eslintPluginPrettierRecommended from "eslint-plugin-prettier/recommended";
 
 export default defineConfig([
   {
@@ -13,7 +13,12 @@ export default defineConfig([
   },
   {
     files: ["**/*.{js,mjs,cjs,ts,mts,cts}"],
-    languageOptions: { globals: globals.browser },
+    languageOptions: {
+      globals: {
+        ...globals.browser,
+        process: "readonly",
+      },
+    },
   },
   {
     plugins: {
@@ -21,6 +26,11 @@ export default defineConfig([
     },
   },
   {
+    languageOptions: {
+      globals: {
+        process: "readonly",
+      },
+    },
     rules: {
       eqeqeq: "off",
       "no-unused-expressions": "error",
@@ -29,9 +39,6 @@ export default defineConfig([
       "jsdoc/check-values": "error",
       "no-console": "warn",
       "no-undef": "error",
-    },
-    globals: {
-      process: "readonly",
     },
   },
   {
