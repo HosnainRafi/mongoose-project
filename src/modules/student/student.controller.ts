@@ -1,51 +1,88 @@
-import { Request, Response } from "express";
+/* eslint-disable prettier/prettier */
+import { Request, Response, NextFunction } from "express";
 import { studentServices } from "./student.service";
+import studentValidationSchemaUsingZod from "./student.zod.validation";
 
-const createStudent = async (req: Request, res: Response) => {
+const createStudent = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const { student: studentData } = req.body;
 
-    //will call service func to post the data
-    const result = await studentServices.createStudentIntoDB(studentData);
+    // ✅ Safe Zod validation
+    const parsed = studentValidationSchemaUsingZod.safeParse(studentData);
 
-    //Get the response
-    res.status(200).json({
+    if (!parsed.success) {
+      const errorMessages = parsed.error.errors.map((err) => ({
+        path: err.path.join("."),
+        message: err.message,
+      }));
+
+      return res.status(400).json({
+        success: false,
+        message: "Validation failed",
+        errors: errorMessages,
+      });
+    }
+
+    const validatedStudent = parsed.data;
+
+    const result = await studentServices.createStudentIntoDB(validatedStudent);
+
+    return res.status(201).json({
       success: true,
-      message: "Student is created successfully",
+      message: "Student created successfully",
       data: result,
     });
   } catch (error) {
-    console.log(error);
+    next(error); // ✅ updated
   }
 };
 
-const getAllStudents = async (req: Request, res: Response) => {
+const getAllStudents = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
-    //will call service func to get the data
     const result = await studentServices.getAllStudentsFromDB();
 
-    //Get the response
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
-      message: "Student is retrived successfully",
+      message: "Students retrieved successfully",
       data: result,
     });
   } catch (error) {
-    console.log(error);
+    next(error); // ✅ updated
   }
 };
 
-const getSingleStudent = async (req: Request, res: Response) => {
+const getSingleStudent = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const { studentId } = req.params;
+
     const result = await studentServices.getSingleStudentFromDB(studentId);
-    res.status(200).json({
+
+    if (!result) {
+      return res.status(404).json({
+        success: false,
+        message: "Student not found",
+      });
+    }
+
+    return res.status(200).json({
       success: true,
-      message: "Student is retrived successfully",
+      message: "Student retrieved successfully",
       data: result,
     });
   } catch (error) {
-    console.log(error);
+    next(error); // ✅ updated
   }
 };
 

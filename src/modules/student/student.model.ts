@@ -1,86 +1,58 @@
-import { model, Schema } from "mongoose";
+/* eslint-disable prettier/prettier */
+import { Schema, model } from "mongoose";
 import {
-  Guardian,
-  LocalGuardian,
   IStudent,
   UserName,
+  Guardian,
+  LocalGuardian,
 } from "./student.interface";
 
-const userNameSchema = new Schema<UserName>({
-  firstName: {
-    type: String,
-    required: true,
+const userNameSchema = new Schema<UserName>(
+  {
+    firstName: { type: String, trim: true },
+    middleName: { type: String },
+    lastName: { type: String, trim: true },
   },
-  middleName: {
-    type: String,
-  },
-  lastName: {
-    type: String,
-    required: true,
-  },
-});
+  { _id: false }
+);
 
-const guardianSchema = new Schema<Guardian>({
-  fatherName: {
-    type: String,
-    required: true,
+const guardianSchema = new Schema<Guardian>(
+  {
+    fatherName: { type: String, trim: true },
+    fatherOccupation: { type: String, trim: true },
+    fatherContactNo: { type: String },
+    motherName: { type: String },
+    motherOccupation: { type: String, required: false },
+    motherContactNo: { type: String, required: false },
   },
-  fatherOccupation: {
-    type: String,
-    required: true,
-  },
-  fatherContactNo: {
-    type: String,
-    required: true,
-  },
-  motherName: {
-    type: String,
-    required: true,
-  },
-  motherOccupation: {
-    type: String,
-    required: true,
-  },
-  motherContactNo: {
-    type: String,
-    required: true,
-  },
-});
+  { _id: false }
+);
 
-const localGuradianSchema = new Schema<LocalGuardian>({
-  name: {
-    type: String,
-    required: true,
+const localGuardianSchema = new Schema<LocalGuardian>(
+  {
+    name: { type: String },
+    occupation: { type: String },
+    contactNo: { type: String },
+    address: { type: String },
   },
-  occupation: {
-    type: String,
-    required: true,
-  },
-  contactNo: {
-    type: String,
-    required: true,
-  },
-  address: {
-    type: String,
-    required: true,
-  },
-});
+  { _id: false }
+);
 
 const studentSchema = new Schema<IStudent>({
-  id: { type: String },
+  id: { type: String, unique: true },
   name: userNameSchema,
-  gender: ["male", "female"],
+  gender: { type: String },
   dateOfBirth: { type: String },
-  email: { type: String, required: true },
-  contactNo: { type: String, required: true },
-  emergencyContactNo: { type: String, required: true },
-  bloogGroup: ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"],
-  presentAddress: { type: String, required: true },
-  permanentAddres: { type: String, required: true },
+  email: { type: String, unique: true },
+  contactNo: { type: String },
+  emergencyContactNo: { type: String },
+  bloogGroup: { type: String },
+  presentAddress: { type: String },
+  permanentAddress: { type: String },
   guardian: guardianSchema,
-  localGuardian: localGuradianSchema,
+  localGuardian: localGuardianSchema,
   profileImg: { type: String },
-  isActive: ["active", "blocked"],
+  isActive: { type: String, default: "active" },
 });
 
 export const StudentModel = model<IStudent>("Student", studentSchema);

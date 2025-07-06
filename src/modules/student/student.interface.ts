@@ -1,41 +1,60 @@
-// import { Schema, model, connect } from "mongoose";
+import { z } from "zod";
 
-// 1. Create an interface representing a document in MongoDB.
-export type UserName = {
-  firstName: string;
-  middleName: string;
-  lastName: string;
-};
+export const userNameZodSchema = z.object({
+  firstName: z.string(),
+  middleName: z.string().optional(),
+  lastName: z.string(),
+});
 
-export type Guardian = {
-  fatherName: string;
-  fatherOccupation: string;
-  fatherContactNo: string;
-  motherName: string;
-  motherOccupation: string;
-  motherContactNo: string;
-};
+export const guardianZodSchema = z.object({
+  fatherName: z.string(),
+  fatherOccupation: z.string(),
+  fatherContactNo: z.string(),
+  motherName: z.string(),
+  motherOccupation: z.string().optional(),
+  motherContactNo: z.string().optional(),
+});
 
-export type LocalGuardian = {
-  name: string;
-  occupation: string;
-  contactNo: string;
-  address: string;
-};
+export const localGuardianZodSchema = z.object({
+  name: z.string(),
+  occupation: z.string(),
+  contactNo: z.string(),
+  address: z.string(),
+});
 
-export type IStudent = {
-  id: string;
-  name: UserName;
-  gender: "male" | "female";
-  dateOfBirth?: string;
-  email: string;
-  contactNo: string;
-  emergencyContactNo: string;
-  bloogGroup?: "A+" | "A-" | "B+" | "B-" | "AB+" | "AB-" | "O+" | "O-";
-  presentAddress: string;
-  permanentAddres: string;
-  guardian: Guardian;
-  localGuardian: LocalGuardian;
-  profileImg?: string;
-  isActive: "active" | "blocked";
-};
+export const studentValidationSchemaUsingZod = z.object({
+  id: z.string(),
+
+  name: userNameZodSchema,
+
+  gender: z.enum(["male", "female", "other"]),
+
+  dateOfBirth: z.string().optional(),
+
+  email: z.string().email(),
+
+  contactNo: z.string(),
+
+  emergencyContactNo: z.string(),
+
+  bloogGroup: z
+    .enum(["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"])
+    .optional(),
+
+  presentAddress: z.string(),
+
+  permanentAddress: z.string().optional(),
+
+  guardian: guardianZodSchema,
+
+  localGuardian: localGuardianZodSchema,
+
+  profileImg: z.string().url().optional(),
+
+  isActive: z.enum(["active", "blocked"]),
+});
+
+export type IStudent = z.infer<typeof studentValidationSchemaUsingZod>;
+export type UserName = z.infer<typeof userNameZodSchema>;
+export type Guardian = z.infer<typeof guardianZodSchema>;
+export type LocalGuardian = z.infer<typeof localGuardianZodSchema>;

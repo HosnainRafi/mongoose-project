@@ -1,4 +1,4 @@
-import express, { Application, Request, Response } from "express";
+import express, { Application, NextFunction, Request, Response } from "express";
 import cors from "cors";
 import { studentRoutes } from "./modules/student/student.route";
 
@@ -15,4 +15,11 @@ app.get("/", (req: Request, res: Response) => {
   res.send("Hello World!");
 });
 
+app.use((err: any, req: Request, res: Response, next: NextFunction) => {
+  res.status(500).json({
+    success: false,
+    message: "Something went wrong",
+    error: err?.message || "Unknown error",
+  });
+});
 export default app;
