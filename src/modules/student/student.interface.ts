@@ -25,6 +25,8 @@ export const localGuardianZodSchema = z.object({
 export const studentValidationSchemaUsingZod = z.object({
   id: z.string(),
 
+  password: z.string(),
+
   name: userNameZodSchema,
 
   gender: z.enum(["male", "female", "other"]),
@@ -52,6 +54,8 @@ export const studentValidationSchemaUsingZod = z.object({
   profileImg: z.string().url().optional(),
 
   isActive: z.enum(["active", "blocked"]),
+
+  isDeleted: z.boolean(),
 });
 
 export type IStudent = z.infer<typeof studentValidationSchemaUsingZod>;

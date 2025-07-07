@@ -5,6 +5,12 @@ const studentValidationSchemaUsingZod = z.object({
     required_error: "Student ID is required",
     invalid_type_error: "Student ID must be a string",
   }),
+  password: z
+    .string({
+      required_error: "Password is required",
+      invalid_type_error: "Password must be a string",
+    })
+    .max(20, "Password must be at most 20 characters"),
 
   name: z.object({
     firstName: z
@@ -137,6 +143,11 @@ const studentValidationSchemaUsingZod = z.object({
       invalid_type_error: 'Status must be either "active" or "blocked"',
     })
     .default("active"),
+
+  isDeleted: z.boolean({
+    required_error: "isDeleted is required",
+    invalid_type_error: "Deleted must be either true or false",
+  }),
 });
 
 export default studentValidationSchemaUsingZod;

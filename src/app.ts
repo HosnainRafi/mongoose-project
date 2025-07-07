@@ -15,11 +15,13 @@ app.get("/", (req: Request, res: Response) => {
   res.send("Hello World!");
 });
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
   res.status(500).json({
     success: false,
     message: "Something went wrong",
     error: err?.message || "Unknown error",
   });
+  next();
 });
 export default app;
